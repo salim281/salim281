@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic File Converter | All-in-One Solution</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/html5-to-pdf/dist/html5-to-pdf.es.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-light: #f1f5f9;
+            --text-dim: #94a3b8;
+            --gradient: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 2rem;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Glass Card Effect */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 3px dashed rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-area.drag-over {
+            border-color: var(--secondary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* File Preview */
+        .file-preview {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .file-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-info p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* Fancy Buttons */
+        .btn {
+            position: relative;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            outline: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--secondary), #059669);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Conversion Options */
+        .format-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .format-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .format-option:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .format-option.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        .format-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 2rem 0;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        /* Result Section */
+        .result-card {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            animation: bounce 1s ease;
+        }
+
+        /* Social Share */
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .share-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .share-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .drive { background: #4285F4; }
+        .gmail { background: #EA4335; }
+        .whatsapp { background: #25D366; }
+        .facebook { background: #1877F2; }
+        .twitter { background: #1DA1F2; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .glass-card {
+                padding: 1.5rem;
+            }
+            
+            .upload-area {
+                padding: 3rem 1rem;
+            }
+            
+            .format-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="logo"><i class="fas fa-magic"></i> Magic Converter</h1>
+            <p class="tagline">Convert files instantly between 50+ formats with beautiful interface</p>
+        </header>
+
+        <main>
+            <!-- File Upload Section -->
+            <div class="glass-card">
+                <h2><i class="fas fa-cloud-upload-alt"></i> Upload Your File</h2>
+                <div id="uploadArea" class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <h3>Drag & Drop your file here</h3>
+                    <p class="text-dim">or click to browse</p>
+                    <p class="text-dim" style="margin-top: 1rem;">
+                        Supports: PDF, DOCX, PNG, JPG, XLS, PPT, and more
+                    </p>
+                    <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
+                </div>
+                
+                <!-- File Preview -->
+                <div id="filePreview" style="display: none;">
+                    <div class="file-preview">
+                        <div class="file-icon">
+                            <i class="fas fa-file"></i>
+                        </div>
+                        <div class="file-info">
+                            <h4 id="fileName">File Name</h4>
+                            <p id="fileSize">0 MB</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="clearFile()">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversion Options -->
+            <div class="glass-card" id="conversionSection" style="display: none;">
+                <h2><i class="fas fa-exchange-alt"></i> Convert To</h2>
+                <div class="format-grid" id="formatOptions">
+                    <!-- Format options will be generated dynamically -->
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="progress-container" id="progressContainer" style="display: none;">
+                    <h3>Converting...</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText">0%</p>
+                </div>
+            </div>
+
+            <!-- Result Section -->
+            <div class="glass-card result-card" id="resultSection" style="display: none;">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Conversion Complete!</h2>
+                <p>Your file has been converted successfully</p>
+                
+                <div style="margin: 2rem 0;">
+                    <button class="btn btn-primary" onclick="downloadFile()">
+                        <i class="fas fa-download"></i> Download File
+                    </button>
+                </div>
+
+                <!-- Share Options -->
+                <h3>Share or Save</h3>
+                <div class="share-buttons">
+                    <div class="share-btn drive" onclick="saveToGoogleDrive()">
+                        <i class="fab fa-google-drive"></i>
+                    </div>
+                    <div class="share-btn gmail" onclick="shareViaEmail()">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="share-btn whatsapp" onclick="shareViaWhatsApp()">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="share-btn facebook" onclick="shareViaFacebook()">
+                        <i class="fab fa-facebook-f"></i>
+                    </div>
+                    <div class="share-btn twitter" onclick="shareViaTwitter()">
+                        <i class="fab fa-twitter"></i>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <button class="btn btn-secondary" onclick="copyShareLink()">
+                        <i class="fas fa-link"></i> Copy Share Link
+                    </button>
+                    <button class="btn btn-secondary" onclick="startNewConversion()">
+                        <i class="fas fa-redo"></i> Convert Another File
+                    </button>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="glass-card">
+                <h2><i class="fas fa-star"></i> Features</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                        <i class="fas fa-bolt" style="color: var(--accent); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                        <h4>Fast Conversion</h4>
+                        <p>Convert files in seconds with our optimized engine</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                        <i class="fas fa-shield-alt" style="color: var(--secondary); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                        <h4>Secure & Private</h4>
+                        <p>Files are deleted automatically after conversion</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                        <i class="fas fa-mobile-alt" style="color: var(--primary); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                        <h4>Mobile Friendly</h4>
+                        <p>Works perfectly on all devices</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2024 Magic Converter. All rights reserved.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+                <i class="fas fa-lock"></i> Your files are processed securely and never stored permanently
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Global variables
+        let currentFile = null;
+        let convertedFileUrl = null;
+        let selectedFormat = null;
+
+        // Supported formats
+        const supportedFormats = {
+            'pdf': ['docx', 'png', 'jpg', 'txt'],
+            'docx': ['pdf', 'txt', 'html'],
+            'png': ['jpg', 'webp', 'pdf', 'svg'],
+            'jpg': ['png', 'webp', 'pdf', 'svg'],
+            'jpeg': ['png', 'webp', 'pdf', 'svg'],
+            'xls': ['pdf', 'csv', 'xlsx'],
+            'xlsx': ['pdf', 'csv', 'xls'],
+            'ppt': ['pdf', 'pptx'],
+            'pptx': ['pdf', 'ppt']
+        };
+
+        // Format icons mapping
+        const formatIcons = {
+            'pdf': 'fas fa-file-pdf',
+            'docx': 'fas fa-file-word',
+            'png': 'fas fa-file-image',
+            'jpg': 'fas fa-file-image',
+            'jpeg': 'fas fa-file-image',
+            'txt': 'fas fa-file-alt',
+            'html': 'fas fa-code',
+            'webp': 'fas fa-file-image',
+            'svg': 'fas fa-file-image',
+            'xls': 'fas fa-file-excel',
+            'xlsx': 'fas fa-file-excel',
+            'csv': 'fas fa-file-csv',
+            'ppt': 'fas fa-file-powerpoint',
+            'pptx': 'fas fa-file-powerpoint'
+        };
+
+        // Initialize drag and drop
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('drag-over');
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file) handleFileSelect({ target: { files: [file] } });
+            });
+        });
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            currentFile = file;
+            
+            // Show file preview
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = 
+                `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+            
+            document.getElementById('filePreview').style.display = 'block';
+            
+            // Show conversion options
+            showConversionOptions(file);
+            
+            // Scroll to conversion section
+            document.getElementById('conversionSection').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        // Show available conversion formats
+        function showConversionOptions(file) {
+            const extension = file.name.split('.').pop().toLowerCase();
+            const formatOptions = document.getElementById('formatOptions');
+            formatOptions.innerHTML = '';
+            
+            if (supportedFormats[extension]) {
+                document.getElementById('conversionSection').style.display = 'block';
+                
+                supportedFormats[extension].forEach(format => {
+                    const option = document.createElement('div');
+                    option.className = 'format-option';
+                    option.onclick = () => selectFormat(format);
+                    
+                    option.innerHTML = `
+                        <div class="format-icon">
+                            <i class="${formatIcons[format] || 'fas fa-file'}"></i>
+                        </div>
+                        <div>${format.toUpperCase()}</div>
+                    `;
+                    
+                    formatOptions.appendChild(option);
+                });
+            } else {
+                alert('File format not supported. Please try another file.');
+            }
+        }
+
+        // Select conversion format
+        function selectFormat(format) {
+            selectedFormat = format;
+            
+            // Update UI
+            document.querySelectorAll('.format-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.target.closest('.format-option').classList.add('active');
+            
+            // Show convert button
+            setTimeout(() => {
+                const convertBtn = document.createElement('button');
+                convertBtn.className = 'btn btn-primary';
+                convertBtn.style.marginTop = '2rem';
+                convertBtn.innerHTML = '<i class="fas fa-bolt"></i> Convert Now';
+                convertBtn.onclick = startConversion;
+                
+                const existingBtn = document.querySelector('.convert-btn');
+                if (existingBtn) existingBtn.remove();
+                
+                convertBtn.classList.add('convert-btn');
+                document.getElementById('conversionSection').appendChild(convertBtn);
+            }, 100);
+        }
+
+        // Start conversion process
+        async function startConversion() {
+            if (!currentFile || !selectedFormat) {
+                alert('Please select a file and format');
+                return;
+            }
+            
+            // Show progress
+            document.getElementById('progressContainer').style.display = 'block';
+            
+            // Simulate progress (in real app, this would be actual conversion)
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress > 100) progress = 100;
+                
+                document.getElementById('progressFill').style.width = `${progress}%`;
+                document.getElementById('progressText').textContent = `${Math.round(progress)}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    simulateConversionComplete();
+                }
+            }, 300);
+        }
+
+        // Simulate conversion completion
+        function simulateConversionComplete() {
+            // For demo purposes, we'll create a fake download
+            // In a real app, this would be an actual converted file
+            
+            const blob = new Blob(
+                [`This is a simulated ${selectedFormat} file converted from ${currentFile.name}`], 
+                { type: 'application/octet-stream' }
+            );
+            
+            convertedFileUrl = URL.createObjectURL(blob);
+            
+            // Show result section
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('conversionSection').style.display = 'none';
+            
+            // Scroll to result
+            setTimeout(() => {
+                document.getElementById('resultSection').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            }, 500);
+        }
+
+        // Download converted file
+        function downloadFile() {
+            if (!convertedFileUrl) return;
+            
+            const a = document.createElement('a');
+            a.href = convertedFileUrl;
+            a.download = `converted-file.${selectedFormat}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Show success message
+            alert('Download started!');
+        }
+
+        // Share functions
+        function saveToGoogleDrive() {
+            alert('Google Drive integration would be implemented with Google Drive API');
+            // In real implementation: Use Google Drive API
+        }
+
+        function shareViaEmail() {
+            const subject = 'Check out my converted file!';
+            const body = `I converted a file using Magic Converter. Download link: ${window.location.href}`;
+            window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+        }
+
+        function shareViaWhatsApp() {
+            const text = `Check out my converted file: ${window.location.href}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+        }
+
+        function shareViaFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`);
+        }
+
+        function shareViaTwitter() {
+            const text = 'Just converted a file using Magic Converter!';
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`);
+        }
+
+        function copyShareLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        }
+
+        // Utility functions
+        function clearFile() {
+            currentFile = null;
+            document.getElementById('filePreview').style.display = 'none';
+            document.getElementById('conversionSection').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+        }
+
+        function startNewConversion() {
+            clearFile();
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('uploadArea').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Image conversion using Canvas API (client-side)
+        function convertImage(file, targetFormat) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        
+                        canvas.toBlob((blob) => {
+                            resolve(blob);
+                        }, `image/${targetFormat}`);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // PDF conversion using pdf-lib (would need to include the library)
+        // For actual implementation, you'd need to include:
+        // <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+        // <script src="https://unpkg.com/@pdf-lib/fontkit"></script>
+
+        // Demo: Client-side PDF to image conversion
+        async function convertPdfToImage(pdfFile) {
+            // This is a simplified example
+            // In production, you'd use a proper PDF library
+            alert('For PDF conversion, you would need to include a PDF library like pdf-lib');
+        }
+
+        // For actual file conversion, you can integrate with free APIs:
+        async function convertUsingFreeApi(file, targetFormat) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('targetFormat', targetFormat);
+                
+                // Example using a free conversion API
+                const response = await fetch('https://api.example.com/convert', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    return URL.createObjectURL(blob);
+                }
+            } catch (error) {
+                console.error('Conversion error:', error);
+                return null;
+            }
+        }
+    </script>
+</body>
+</html>
