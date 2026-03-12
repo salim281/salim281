@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @salim281
 - 👀 I’m interested in Python Programming, Web Development and any other related IT areas.
-- 🌱 I’m currently learning JavaScript, HTML, CSS and also planning to statrt my BSc. in COmputer Science.
+I am a student, front-end developer. 
 - 💞️ I’m looking to collaborate on in Projects with like - minded coders/people.
 - 📫 How to reach me: salimkabiru75@gmail.com, +234 7032488675.
 - 😄 Pronouns: Muhd Salim
