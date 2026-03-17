@@ -1,11 +1,20 @@
-- 👋 Hi, I’m @salim281
-- 👀 I’m interested in Python Programming, Web Development and any other related IT areas.
-I am a student, front-end developer. 
-- 💞️ I’m looking to collaborate on in Projects with like - minded coders/people.
-- 📫 How to reach me: salimkabiru75@gmail.com, +234 7032488675.
-- 😄 Pronouns: Muhd Salim
+# Hi, I'm Salim 👋
 
-<!---
-salim281/salim281 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+🎨 I am Young tech professional, Graphic Designer, aspiring Computer Scientist. 
+💻 Learning Web Development and Python programming. 
+📍 I am living in Nigeria  
+
+## 🔥 Skills
+- Photoshop & CorelDraw
+- Certified Generative AI skill (LinkedIn)
+- Certified AI-Powered Product & UX. 
+- Canva
+- Python, HTML & CSS (beginner)
+
+## 📁 Projects
+- Blog
+- Designs
+
+## 📞 Contact Me
+- WhatsApp: +2347032488675
+- Email: salimkabiru75@gmail.com
